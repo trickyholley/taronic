@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Taronic</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="toolbar">
+        <h1>Taronic</h1>
+        <button id="btn-new" title="Start a blank card">New</button>
+        <button id="btn-load">Open…</button>
+        <input id="file-load" type="file" accept="application/json" hidden />
+        <button id="btn-save">Save JSON</button>
+        <button id="btn-export-svg">Export SVG</button>
+        <label class="bg-picker">
+          Background
+          <input id="input-background" type="color" />
+        </label>
+        <span id="status" class="status"></span>
+      </header>
+
+      <aside class="palette">
+        <input id="icon-search" type="search" placeholder="Search icons…" />
+        <button id="btn-import-icons">Import icon set…</button>
+        <input id="file-import-icons" type="file" accept="image/svg+xml,.svg" multiple hidden />
+        <div id="icon-grid" class="icon-grid"></div>
+      </aside>
+
+      <main class="canvas-area">
+        <div class="canvas-frame">
+          <svg id="card-canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+      </main>
+
+      <aside class="properties" id="properties-panel">
+        <section id="icon-properties" class="panel-section" hidden>
+          <h2>Selected icon</h2>
+          <label>Color <input id="input-color" type="color" /></label>
+          <label
+            >Rotation <input id="input-rotation" type="range" min="0" max="360" step="1" />
+            <input id="input-rotation-number" type="number" min="0" max="360" step="1"
+          /></label>
+          <label
+            >Size <input id="input-scale" type="range" min="0.2" max="4" step="0.05" />
+            <input id="input-scale-number" type="number" min="0.2" max="4" step="0.05"
+          /></label>
+          <div class="button-row">
+            <button id="btn-bring-front">Bring to front</button>
+            <button id="btn-send-back">Send to back</button>
+          </div>
+          <button id="btn-delete-icon" class="danger">Delete icon</button>
+        </section>
+
+        <section class="panel-section">
+          <h2>Layers</h2>
+          <ol id="layer-list" class="layer-list"></ol>
+        </section>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
