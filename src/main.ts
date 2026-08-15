@@ -25,6 +25,11 @@ const app = new App({
     size: el<HTMLInputElement>("input-size"),
     sizeNumber: el<HTMLInputElement>("input-size-number"),
   },
+  label: {
+    text: el<HTMLInputElement>("input-label-text"),
+    color: el<HTMLInputElement>("input-label-color"),
+    fontSize: el<HTMLInputElement>("input-label-size"),
+  },
 });
 
 el<HTMLInputElement>("input-default-icon-color").value = app.defaultIconColor;
@@ -90,6 +95,16 @@ el<HTMLInputElement>("input-background").addEventListener("input", (event) => {
 
 el<HTMLInputElement>("input-default-icon-color").addEventListener("input", (event) => {
   app.defaultIconColor = (event.target as HTMLInputElement).value;
+});
+
+el<HTMLInputElement>("input-label-text").addEventListener("input", (event) => {
+  app.setLabel({ text: (event.target as HTMLInputElement).value });
+});
+el<HTMLInputElement>("input-label-color").addEventListener("input", (event) => {
+  app.setLabel({ color: (event.target as HTMLInputElement).value });
+});
+el<HTMLInputElement>("input-label-size").addEventListener("input", (event) => {
+  app.setLabel({ fontSize: Number((event.target as HTMLInputElement).value) });
 });
 
 // Properties panel (listeners wired once; app.render() only pushes values into these).

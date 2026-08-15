@@ -2,13 +2,20 @@ import { renderCanvas, screenToSvgPoint } from "./canvasRender";
 import { getIcon } from "./iconRegistry";
 import { renderLayerList } from "./layerList";
 import { findSelectedIcon, syncPropertiesPanel, type PropertyRefs } from "./propertiesPanel";
-import { emptyDocument, ICON_BASE_SIZE, type CardDocument, type IconDef, type PlacedIcon } from "./types";
+import { emptyDocument, ICON_BASE_SIZE, type CardDocument, type CardLabel, type IconDef, type PlacedIcon } from "./types";
+
+export interface LabelRefs {
+  text: HTMLInputElement;
+  color: HTMLInputElement;
+  fontSize: HTMLInputElement;
+}
 
 export interface AppRefs {
   svg: SVGSVGElement;
   layerList: HTMLOListElement;
   background: HTMLInputElement;
   properties: PropertyRefs;
+  label: LabelRefs;
 }
 
 /** Owns the card document and all mutation entry points; every mutation ends in a
@@ -36,6 +43,9 @@ export class App {
     );
     syncPropertiesPanel(this.refs.properties, this.doc, this.selectedId);
     this.refs.background.value = this.doc.background;
+    this.refs.label.text.value = this.doc.label.text;
+    this.refs.label.color.value = this.doc.label.color;
+    this.refs.label.fontSize.value = String(this.doc.label.fontSize);
   }
 
   select(id: string | null) {
@@ -87,6 +97,11 @@ export class App {
 
   setBackground(color: string) {
     this.doc.background = color;
+    this.render();
+  }
+
+  setLabel(patch: Partial<CardLabel>) {
+    Object.assign(this.doc.label, patch);
     this.render();
   }
 

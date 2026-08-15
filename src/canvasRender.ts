@@ -42,6 +42,25 @@ export function renderCanvas(svg: SVGSVGElement, doc: CardDocument, selectedId: 
 
     svg.appendChild(group);
   }
+
+  if (doc.label.text) svg.appendChild(buildLabelText(doc));
+}
+
+/** Bottom margin (px, card-space) between the label's baseline and the card edge - shared
+ * with persistence.ts's buildExportSvg so the live canvas and exported SVG can't drift apart. */
+export const LABEL_BOTTOM_MARGIN = 56;
+
+function buildLabelText(doc: CardDocument): SVGTextElement {
+  const text = document.createElementNS(SVG_NS, "text");
+  text.setAttribute("x", String(doc.width / 2));
+  text.setAttribute("y", String(doc.height - LABEL_BOTTOM_MARGIN));
+  text.setAttribute("text-anchor", "middle");
+  text.setAttribute("font-size", String(doc.label.fontSize));
+  text.setAttribute("fill", doc.label.color);
+  text.setAttribute("font-family", "Georgia, 'Times New Roman', serif");
+  text.dataset.role = "label";
+  text.textContent = doc.label.text;
+  return text;
 }
 
 /** Converts a pointer/mouse event's screen coordinates into the SVG's own user-space

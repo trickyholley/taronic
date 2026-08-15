@@ -72,6 +72,14 @@ body {
   color: var(--text-dim);
 }
 
+#input-label-text {
+  width: 9rem;
+}
+
+#input-label-size {
+  width: 3.5rem;
+}
+
 button {
   background: #2a2434;
   color: var(--text);

@@ -35,18 +35,29 @@ export interface CardCredit {
   set: string;
 }
 
+/** The card's name label — fixed bottom-center, not draggable like a [PlacedIcon].
+ * Rendered only when `text` is non-empty. */
+export interface CardLabel {
+  text: string;
+  color: string;
+  fontSize: number;
+}
+
 export interface CardDocument {
   formatVersion: 1;
   width: number;
   height: number;
   background: string;
   icons: PlacedIcon[];
+  label: CardLabel;
 }
 
 export const CARD_WIDTH = 570;
 export const CARD_HEIGHT = 1000;
 /** Default size (px) for a newly placed icon. */
 export const ICON_BASE_SIZE = 90;
+/** Default font size (px) for a newly created card's label. */
+export const LABEL_BASE_FONT_SIZE = 48;
 
 export function emptyDocument(): CardDocument {
   return {
@@ -55,5 +66,6 @@ export function emptyDocument(): CardDocument {
     height: CARD_HEIGHT,
     background: "#1b1023",
     icons: [],
+    label: { text: "", color: "#f2e9dc", fontSize: LABEL_BASE_FONT_SIZE },
   };
 }

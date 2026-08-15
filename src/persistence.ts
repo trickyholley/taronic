@@ -1,5 +1,6 @@
+import { LABEL_BOTTOM_MARGIN } from "./canvasRender";
 import { innerTransform, outerTransform } from "./iconTransform";
-import type { CardCredit, CardDocument } from "./types";
+import { emptyDocument, type CardCredit, type CardDocument } from "./types";
 
 // TS's bundled DOM lib doesn't ship File System Access API types yet — typed
 // locally rather than pulling in a global .d.ts for one narrow use.
@@ -84,6 +85,9 @@ export async function loadDocumentFromFile(file: File): Promise<CardDocument> {
   if (parsed.formatVersion !== 1 || !Array.isArray(parsed.icons)) {
     throw new Error("Not a recognized Taronic card file");
   }
+  // Cards saved before the label field existed have none - default it in rather than
+  // rejecting the file.
+  if (!parsed.label) parsed.label = emptyDocument().label;
   return parsed as CardDocument;
 }
 
@@ -98,11 +102,21 @@ export function buildExportSvg(doc: CardDocument): string {
     )
     .join("\n");
 
+  const label = doc.label.text
+    ? `\n  <text x="${doc.width / 2}" y="${doc.height - LABEL_BOTTOM_MARGIN}" text-anchor="middle" ` +
+      `font-size="${doc.label.fontSize}" fill="${doc.label.color}" font-family="Georgia, 'Times New Roman', serif">` +
+      `${escapeXml(doc.label.text)}</text>`
+    : "";
+
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${doc.width} ${doc.height}" width="${doc.width}" height="${doc.height}">
   <rect x="0" y="0" width="${doc.width}" height="${doc.height}" fill="${doc.background}" />
-${icons}
+${icons}${label}
 </svg>
 `;
+}
+
+function escapeXml(text: string): string {
+  return text.replace(/[&<>]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[char]!);
 }
 
 export function exportDocumentAsSvg(doc: CardDocument, suggestedName = "card.svg"): Promise<string | null> {
