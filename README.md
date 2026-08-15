@@ -5,6 +5,9 @@ canvas, transform them, save your work, export SVG. Not a Pyxie feature — a st
 tool for making Pyxie deck art offline. No build step ships icons at runtime; no server,
 no accounts, everything lives in the browser tab.
 
+Live at **[trickyholley.github.io/taronic](https://trickyholley.github.io/taronic/)**
+(deploys automatically on push to `main` — see `.github/workflows/deploy.yml`).
+
 ## Use it
 
 ```bash
@@ -12,7 +15,8 @@ pnpm install
 pnpm dev
 ```
 
-Opens at `http://localhost:5190`.
+Opens at `http://localhost:5190/taronic/` (the `/taronic/` prefix matches the deployed
+GitHub Pages path — see `vite.config.ts`'s `base`).
 
 - Drag an icon from the left palette onto the card. Search filters the palette.
 - Click a placed icon to select it; drag it around the canvas directly, or use the right
@@ -75,3 +79,6 @@ the exported SVG, so they can't drift apart.
 Vanilla TypeScript + native SVG DOM (no framework) on Vite. Icons are placed as real
 `<g>` elements on an `<svg>` canvas, so manipulating them on-screen *is* building the
 export — no separate serialization step.
+
+The favicon (`public/favicon.svg`) is a filled Lucide `moon-star`, on-brand and legible
+even at tab size — plain outline strokes turned to mush that small, so it's a solid fill.
