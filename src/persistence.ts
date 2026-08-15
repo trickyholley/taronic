@@ -1,5 +1,5 @@
 import { innerTransform, outerTransform } from "./iconTransform";
-import type { CardDocument } from "./types";
+import type { CardCredit, CardDocument } from "./types";
 
 // TS's bundled DOM lib doesn't ship File System Access API types yet — typed
 // locally rather than pulling in a global .d.ts for one narrow use.
@@ -58,8 +58,24 @@ async function saveWithNativeDialogOrDownload(
   return filename;
 }
 
+/** Derives this card's attribution list from the icons actually placed on it — one
+ * entry per distinct author+set, so e.g. a CC BY credits section can be generated
+ * straight from a saved card without hand-tracking which icons ended up on it.
+ * Icons with no author on record (custom imports) are excluded rather than guessed at. */
+export function buildCredits(doc: CardDocument): CardCredit[] {
+  const seen = new Map<string, CardCredit>();
+  for (const icon of doc.icons) {
+    if (!icon.author) continue;
+    const key = `${icon.author} ${icon.set}`;
+    if (!seen.has(key)) seen.set(key, { author: icon.author, set: icon.set });
+  }
+  return [...seen.values()].sort((a, b) => a.author.localeCompare(b.author));
+}
+
 export function saveDocumentAsJson(doc: CardDocument, suggestedName = "card.json"): Promise<string | null> {
-  return saveWithNativeDialogOrDownload(JSON.stringify(doc, null, 2), suggestedName, "application/json", ".json");
+  const withCredits = { ...doc, credits: buildCredits(doc) };
+  const json = JSON.stringify(withCredits, null, 2);
+  return saveWithNativeDialogOrDownload(json, suggestedName, "application/json", ".json");
 }
 
 export async function loadDocumentFromFile(file: File): Promise<CardDocument> {

@@ -51,6 +51,9 @@ export async function parseImportedSvgFiles(files: FileList | File[]): Promise<I
       id: `custom:${file.name}:${crypto.randomUUID()}`,
       name: titleCase(file.name),
       set: "custom",
+      // Unknown provenance — excluded from buildCredits (persistence.ts) rather than
+      // guessed at.
+      author: "",
       viewBox: viewBoxMatch ? viewBoxMatch[1] : "0 0 24 24",
       svgInner: presentation ? `<g ${presentation}>${innerBody}</g>` : innerBody,
     });

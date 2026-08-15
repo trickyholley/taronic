@@ -1,8 +1,10 @@
 import { ICON_BASE_SIZE, type PlacedIcon } from "./types";
 
-/** Placement transform: moves an already-centered icon to its position, rotation, and scale. */
+/** Placement transform: moves an already-centered icon to its position and rotation,
+ * then scales it from its ICON_BASE_SIZE-normalized footprint (see innerTransform)
+ * up/down to its actual on-canvas size in px. */
 export function outerTransform(icon: PlacedIcon): string {
-  return `translate(${icon.x} ${icon.y}) rotate(${icon.rotation}) scale(${icon.scale})`;
+  return `translate(${icon.x} ${icon.y}) rotate(${icon.rotation}) scale(${icon.size / ICON_BASE_SIZE})`;
 }
 
 /** Centers an icon's native viewBox on the origin and normalizes it to ICON_BASE_SIZE,

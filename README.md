@@ -40,13 +40,18 @@ The canvas is a fixed 570×1000 (57:100), matching Pyxie's card aspect ratio.
 
 ## Icons
 
-Ships with the full [Lucide](https://lucide.dev) icon set (~1,500 icons, MIT-licensed),
-baked in at build time — see `scripts/build-icons.mjs`.
+Ships with the full [game-icons.net](https://game-icons.net) set (~4,200 icons — swords,
+plants, animals, roads, tools, and other non-technical symbols much better suited to tarot
+art than a typical UI icon set), baked in at build time via `pnpm icons:game-icons` — see
+`scripts/build-icons.mjs`. Icons are CC BY 3.0 (a few CC0), credited per-artist; see
+"Attribution" below.
 
 Two ways to bring in more icons:
 
-1. **Build-time (permanent)**: point `build-icons.mjs` at any directory of flat,
-   one-`<svg>`-per-file icons (Tabler, Feather, Heroicons outline, ...) and regenerate:
+1. **Build-time (permanent)**: point `build-icons.mjs` at any directory of `.svg` icons —
+   either flat (Tabler, Feather, Heroicons outline, ...) or nested one level deep by
+   author (as game-icons.net's own repo is laid out, for per-icon attribution) — and
+   regenerate:
    ```bash
    node scripts/build-icons.mjs path/to/icon/dir some-set-name src/icons/generated/some-set-name.ts
    ```
@@ -55,6 +60,15 @@ Two ways to bring in more icons:
    `.svg` files you pick straight into a "Custom" section of the palette. Not persisted —
    but every icon you actually place on a card carries its own SVG markup in the saved
    JSON, so a reload never depends on the icon set still being imported.
+
+### Attribution
+
+game-icons.net icons are CC BY 3.0 (mostly) — each icon is individually credited to the
+artist who made it, not just to "game-icons.net". A saved card's JSON carries a `credits`
+array (see Format below), generated at save time from exactly the icons placed on that
+card (`persistence.ts`'s `buildCredits`), so a card never loses track of who to credit
+just because it's no longer open in the editor. Custom-imported icons (unknown license)
+are excluded from `credits` rather than guessed at.
 
 ## Format
 
@@ -67,15 +81,18 @@ A saved card is:
   "height": 1000,
   "background": "#1b1023",
   "icons": [
-    { "instanceId": "...", "name": "Moon", "viewBox": "0 0 24 24", "svgInner": "<g .../>",
-      "x": 285, "y": 300, "rotation": 20, "scale": 1.3, "color": "#ffd27a" }
-  ]
+    { "instanceId": "...", "name": "Moon", "set": "game-icons", "author": "Lorc",
+      "viewBox": "0 0 512 512", "svgInner": "<g .../>",
+      "x": 285, "y": 300, "rotation": 20, "size": 120, "color": "#ffd27a" }
+  ],
+  // Generated fresh at save time from the icons above — see "Attribution".
+  "credits": [{ "author": "Lorc", "set": "game-icons" }]
 }
 ```
 
-`x`/`y` are the icon's center in card-space units. See `src/iconTransform.ts` for exactly
-how position/rotation/scale/viewBox combine — the same logic renders the live canvas and
-the exported SVG, so they can't drift apart.
+`x`/`y` are the icon's center, and `size` its on-canvas footprint, both in card-space px.
+See `src/iconTransform.ts` for exactly how position/rotation/size/viewBox combine — the
+same logic renders the live canvas and the exported SVG, so they can't drift apart.
 
 ## Stack
 

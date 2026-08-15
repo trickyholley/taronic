@@ -2,7 +2,7 @@ import { renderCanvas, screenToSvgPoint } from "./canvasRender";
 import { getIcon } from "./iconRegistry";
 import { renderLayerList } from "./layerList";
 import { findSelectedIcon, syncPropertiesPanel, type PropertyRefs } from "./propertiesPanel";
-import { emptyDocument, type CardDocument, type IconDef, type PlacedIcon } from "./types";
+import { emptyDocument, ICON_BASE_SIZE, type CardDocument, type IconDef, type PlacedIcon } from "./types";
 
 export interface AppRefs {
   svg: SVGSVGElement;
@@ -47,12 +47,14 @@ export class App {
     const instance: PlacedIcon = {
       instanceId: crypto.randomUUID(),
       name: def.name,
+      set: def.set,
+      author: def.author,
       viewBox: def.viewBox,
       svgInner: def.svgInner,
       x,
       y,
       rotation: 0,
-      scale: 1,
+      size: ICON_BASE_SIZE,
       color: this.defaultIconColor,
     };
     this.doc.icons.push(instance);
@@ -60,7 +62,7 @@ export class App {
     this.render();
   }
 
-  updateSelected(patch: Partial<Pick<PlacedIcon, "color" | "x" | "y" | "rotation" | "scale">>) {
+  updateSelected(patch: Partial<Pick<PlacedIcon, "color" | "x" | "y" | "rotation" | "size">>) {
     const icon = findSelectedIcon(this.doc, this.selectedId);
     if (!icon) return;
     Object.assign(icon, patch);
