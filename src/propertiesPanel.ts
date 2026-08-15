@@ -5,6 +5,8 @@ export interface PropertyRefs {
   name: HTMLElement;
   color: HTMLInputElement;
   colorHex: HTMLInputElement;
+  x: HTMLInputElement;
+  y: HTMLInputElement;
   rotation: HTMLInputElement;
   rotationNumber: HTMLInputElement;
   scale: HTMLInputElement;
@@ -21,6 +23,8 @@ export function syncPropertiesPanel(refs: PropertyRefs, doc: CardDocument, selec
   refs.name.textContent = icon.name;
   refs.color.value = icon.color;
   refs.colorHex.value = icon.color;
+  refs.x.value = String(Math.round(icon.x));
+  refs.y.value = String(Math.round(icon.y));
   refs.rotation.value = String(icon.rotation);
   refs.rotationNumber.value = String(icon.rotation);
   refs.scale.value = String(icon.scale);

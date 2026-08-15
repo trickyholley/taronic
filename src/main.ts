@@ -18,6 +18,8 @@ const app = new App({
     name: el<HTMLElement>("selected-icon-name"),
     color: el<HTMLInputElement>("input-color"),
     colorHex: el<HTMLInputElement>("input-color-hex"),
+    x: el<HTMLInputElement>("input-x"),
+    y: el<HTMLInputElement>("input-y"),
     rotation: el<HTMLInputElement>("input-rotation"),
     rotationNumber: el<HTMLInputElement>("input-rotation-number"),
     scale: el<HTMLInputElement>("input-scale"),
@@ -105,6 +107,13 @@ colorHex.addEventListener("input", () => {
   if (!HEX_COLOR_RE.test(colorHex.value)) return;
   colorSwatch.value = colorHex.value;
   app.updateSelected({ color: colorHex.value });
+});
+
+el<HTMLInputElement>("input-x").addEventListener("input", (event) => {
+  app.updateSelected({ x: Number((event.target as HTMLInputElement).value) });
+});
+el<HTMLInputElement>("input-y").addEventListener("input", (event) => {
+  app.updateSelected({ y: Number((event.target as HTMLInputElement).value) });
 });
 
 function wireRotation(input: HTMLInputElement) {

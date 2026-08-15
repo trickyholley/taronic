@@ -60,7 +60,7 @@ export class App {
     this.render();
   }
 
-  updateSelected(patch: Partial<Pick<PlacedIcon, "color" | "rotation" | "scale">>) {
+  updateSelected(patch: Partial<Pick<PlacedIcon, "color" | "x" | "y" | "rotation" | "scale">>) {
     const icon = findSelectedIcon(this.doc, this.selectedId);
     if (!icon) return;
     Object.assign(icon, patch);
