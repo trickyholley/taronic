@@ -109,24 +109,16 @@ colorHex.addEventListener("input", () => {
   app.updateSelected({ color: colorHex.value });
 });
 
-el<HTMLInputElement>("input-x").addEventListener("input", (event) => {
-  app.updateSelected({ x: Number((event.target as HTMLInputElement).value) });
-});
-el<HTMLInputElement>("input-y").addEventListener("input", (event) => {
-  app.updateSelected({ y: Number((event.target as HTMLInputElement).value) });
-});
-
-function wireRotation(input: HTMLInputElement) {
-  input.addEventListener("input", () => app.updateSelected({ rotation: Number(input.value) }));
+function wireNumeric(key: "x" | "y" | "rotation" | "scale", ...ids: string[]) {
+  for (const id of ids) {
+    const input = el<HTMLInputElement>(id);
+    input.addEventListener("input", () => app.updateSelected({ [key]: Number(input.value) }));
+  }
 }
-wireRotation(el<HTMLInputElement>("input-rotation"));
-wireRotation(el<HTMLInputElement>("input-rotation-number"));
-
-function wireScale(input: HTMLInputElement) {
-  input.addEventListener("input", () => app.updateSelected({ scale: Number(input.value) }));
-}
-wireScale(el<HTMLInputElement>("input-scale"));
-wireScale(el<HTMLInputElement>("input-scale-number"));
+wireNumeric("x", "input-x");
+wireNumeric("y", "input-y");
+wireNumeric("rotation", "input-rotation", "input-rotation-number");
+wireNumeric("scale", "input-scale", "input-scale-number");
 
 el<HTMLButtonElement>("btn-bring-front").addEventListener("click", () => app.reorderSelected("front"));
 el<HTMLButtonElement>("btn-send-back").addEventListener("click", () => app.reorderSelected("back"));

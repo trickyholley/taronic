@@ -37,7 +37,6 @@ export function renderCanvas(svg: SVGSVGElement, doc: CardDocument, selectedId: 
       halo.setAttribute("cy", "0");
       halo.setAttribute("r", "64");
       halo.setAttribute("class", "selection-halo");
-      inner.setAttribute("transform", `${innerTransform(icon.viewBox)}`);
       group.insertBefore(halo, inner);
     }
 
