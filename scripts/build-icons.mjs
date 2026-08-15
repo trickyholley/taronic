@@ -32,22 +32,35 @@ function titleCase(slug) {
 // those presentation attributes to a wrapping <g> so recoloring via currentColor
 // still works once the markup is standalone. See src/importIcons.ts for the
 // runtime-import equivalent.
-function extractPresentationAttrs(openTagAttrs) {
+//
+// game-icons.net ships every icon as an opaque full-canvas background shape with
+// no fill/stroke of its own (so it defaults to SVG's initial black) plus a white
+// foreground shape/stroke layered on top — meant to be recolored by making the
+// background transparent and the white parts `currentColor`, not by tinting
+// everything the same color. Blanket-wrapping in `fill="currentColor"` (the
+// single-color-icon fallback below) instead paints the opaque background the same
+// near-white as the theme's text color, which swallows the white foreground glyph
+// entirely — icons render as blank squares. Detect that convention and handle the
+// two layers separately: background inherits `fill="none"`, foreground keeps its
+// own `#fff` swapped for `currentColor`.
+function extractPresentationAttrs(openTagAttrs, innerBody) {
   const get = (name) => openTagAttrs.match(new RegExp(`${name}="([^"]*)"`, "i"))?.[1];
   const fill = get("fill");
   const stroke = get("stroke");
   const strokeWidth = get("stroke-width");
   const strokeLinecap = get("stroke-linecap");
   const strokeLinejoin = get("stroke-linejoin");
+  const isWhiteOnBlackTwoTone =
+    fill === undefined && stroke === undefined && /(fill|stroke)="#fff"/i.test(innerBody);
 
   const attrs = [];
   if (fill !== undefined) attrs.push(`fill="${fill}"`);
-  else if (stroke === undefined) attrs.push(`fill="currentColor"`); // no fill/stroke at all: assume single-color filled icon
+  else if (stroke === undefined) attrs.push(`fill="${isWhiteOnBlackTwoTone ? "none" : "currentColor"}"`);
   if (stroke !== undefined) attrs.push(`stroke="${stroke}"`);
   if (strokeWidth !== undefined) attrs.push(`stroke-width="${strokeWidth}"`);
   if (strokeLinecap !== undefined) attrs.push(`stroke-linecap="${strokeLinecap}"`);
   if (strokeLinejoin !== undefined) attrs.push(`stroke-linejoin="${strokeLinejoin}"`);
-  return attrs.join(" ");
+  return { presentation: attrs.join(" "), isWhiteOnBlackTwoTone };
 }
 
 // Discovers .svg files directly in sourceDir (author "") and one level of
@@ -86,8 +99,12 @@ const icons = files.map(({ path, file, author }) => {
   // ship a sword.svg) — namespace the id by author when there is one.
   const slug = file.replace(/\.svg$/i, "");
   const id = author ? `${author.toLowerCase().replace(/\s+/g, "-")}/${slug}` : slug;
-  const presentation = extractPresentationAttrs(openTagMatch[1]);
-  const innerBody = bodyMatch[1].trim();
+  const { presentation, isWhiteOnBlackTwoTone } = extractPresentationAttrs(openTagMatch[1], bodyMatch[1]);
+  let innerBody = bodyMatch[1].trim();
+  // Swap the explicit white foreground for currentColor so it actually recolors —
+  // it has its own presentation attribute, so it wouldn't inherit the `fill="none"`
+  // we just put on the wrapping <g> for the background layer.
+  if (isWhiteOnBlackTwoTone) innerBody = innerBody.replace(/(fill|stroke)="#fff"/gi, '$1="currentColor"');
   return {
     id,
     name: titleCase(file),
