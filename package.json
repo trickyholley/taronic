@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "packageManager": "pnpm@11.11.0",
   "description": "Minimal SVG card editor for drawing tarot deck art — icons in, SVG out.",
   "scripts": {
     "dev": "vite",
