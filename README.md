@@ -1,3 +1,5 @@
+<img src="public/favicon.svg" width="32" height="32" alt="" align="left" />
+
 # Taronic
 
 Minimal SVG card editor for drawing tarot deck art by hand: drop icons on a card-shaped
