@@ -60,14 +60,22 @@ el<HTMLInputElement>("file-load").addEventListener("change", async (event) => {
   }
 });
 
-el<HTMLButtonElement>("btn-save").addEventListener("click", () => {
-  saveDocumentAsJson(app.doc);
-  flashStatus("Saved card.json");
+// Save and export share one remembered base name so exporting a card you just
+// named "the-fool.json" suggests "the-fool.svg" rather than resetting to "card".
+let filenameBase = "card";
+
+el<HTMLButtonElement>("btn-save").addEventListener("click", async () => {
+  const filename = await saveDocumentAsJson(app.doc, `${filenameBase}.json`);
+  if (!filename) return;
+  filenameBase = filename.replace(/\.json$/i, "");
+  flashStatus(`Saved ${filename}`);
 });
 
-el<HTMLButtonElement>("btn-export-svg").addEventListener("click", () => {
-  exportDocumentAsSvg(app.doc);
-  flashStatus("Exported card.svg");
+el<HTMLButtonElement>("btn-export-svg").addEventListener("click", async () => {
+  const filename = await exportDocumentAsSvg(app.doc, `${filenameBase}.svg`);
+  if (!filename) return;
+  filenameBase = filename.replace(/\.svg$/i, "");
+  flashStatus(`Exported ${filename}`);
 });
 
 el<HTMLInputElement>("input-background").addEventListener("input", (event) => {

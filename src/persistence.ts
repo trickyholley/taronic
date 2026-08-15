@@ -1,6 +1,17 @@
 import { innerTransform, outerTransform } from "./iconTransform";
 import type { CardDocument } from "./types";
 
+// TS's bundled DOM lib doesn't ship File System Access API types yet — typed
+// locally rather than pulling in a global .d.ts for one narrow use.
+interface FileSystemFileHandle {
+  readonly name: string;
+  createWritable(): Promise<{ write(data: string): Promise<void>; close(): Promise<void> }>;
+}
+type ShowSaveFilePicker = (options: {
+  suggestedName: string;
+  types: { description: string; accept: Record<string, string[]> }[];
+}) => Promise<FileSystemFileHandle>;
+
 function download(filename: string, contents: string, mimeType: string) {
   const blob = new Blob([contents], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -11,8 +22,44 @@ function download(filename: string, contents: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function saveDocumentAsJson(doc: CardDocument, filename = "card.json") {
-  download(filename, JSON.stringify(doc, null, 2), "application/json");
+/** Saves via the browser's native OS save dialog where available (Chromium/Edge),
+ * otherwise falls back to prompting for a name and triggering a plain download
+ * (Firefox/Safari don't implement showSaveFilePicker). Returns the chosen filename,
+ * or null if the user cancelled. */
+async function saveWithNativeDialogOrDownload(
+  contents: string,
+  suggestedName: string,
+  mimeType: string,
+  extension: string,
+): Promise<string | null> {
+  const showSaveFilePicker = (window as unknown as { showSaveFilePicker?: ShowSaveFilePicker }).showSaveFilePicker;
+  if (showSaveFilePicker) {
+    try {
+      const handle = await showSaveFilePicker({
+        suggestedName,
+        types: [{ description: mimeType, accept: { [mimeType]: [extension] } }],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(contents);
+      await writable.close();
+      return handle.name;
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return null;
+      throw err;
+    }
+  }
+
+  const input = prompt(`Save as (${extension}):`, suggestedName);
+  if (input === null) return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  const filename = trimmed.toLowerCase().endsWith(extension) ? trimmed : `${trimmed}${extension}`;
+  download(filename, contents, mimeType);
+  return filename;
+}
+
+export function saveDocumentAsJson(doc: CardDocument, suggestedName = "card.json"): Promise<string | null> {
+  return saveWithNativeDialogOrDownload(JSON.stringify(doc, null, 2), suggestedName, "application/json", ".json");
 }
 
 export async function loadDocumentFromFile(file: File): Promise<CardDocument> {
@@ -42,6 +89,6 @@ ${icons}
 `;
 }
 
-export function exportDocumentAsSvg(doc: CardDocument, filename = "card.svg") {
-  download(filename, buildExportSvg(doc), "image/svg+xml");
+export function exportDocumentAsSvg(doc: CardDocument, suggestedName = "card.svg"): Promise<string | null> {
+  return saveWithNativeDialogOrDownload(buildExportSvg(doc), suggestedName, "image/svg+xml", ".svg");
 }

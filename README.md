@@ -20,11 +20,14 @@ Opens at `http://localhost:5190`.
 - The **Layers** list (bottom right) shows stacking order, front-most first — click to
   select, ✕ to delete. "Bring to front" / "Send to back" reorder the selected icon.
 - **Background** color picker (top bar) sets the card's solid fill.
-- **Save JSON** downloads the card as a `.json` file; **Open…** reloads one. This is the
-  editable, re-loadable format — keep the `.json` around if you'll want to tweak the card
-  later.
-- **Export SVG** downloads a standalone `.svg` with the card baked in at its native size —
-  for dropping into Pyxie's deck art later (not wired up yet, by design — see repo issue).
+- **Save JSON** opens your OS's native save dialog (Chromium/Edge — File System Access
+  API) to write a `.json` file; **Open…** reloads one. This is the editable, re-loadable
+  format — keep the `.json` around if you'll want to tweak the card later. Browsers
+  without that API (Firefox, Safari) fall back to a filename prompt + plain download.
+- **Export SVG** likewise prompts for a save location and writes a standalone `.svg` with
+  the card baked in at its native 570×1000 size — for dropping into Pyxie's deck art later
+  (not wired up yet, by design — see repo issue). Save and Export share one remembered
+  filename, so naming a card "the-fool.json" suggests "the-fool.svg" next.
 
 The canvas is a fixed 570×1000 (57:100), matching Pyxie's card aspect ratio.
 
