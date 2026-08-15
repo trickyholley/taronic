@@ -122,5 +122,14 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// Refreshing/closing loses anything not saved (no autosave) — warn once there's an
+// actual card in progress. The confirmation text itself is browser-controlled; most
+// browsers show a generic "leave site?" message regardless of returnValue's content.
+window.addEventListener("beforeunload", (event) => {
+  if (app.doc.icons.length === 0) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
+
 // Handy for quick console inspection while developing.
 Object.assign(window, { taronic: { app, buildExportSvg } });
