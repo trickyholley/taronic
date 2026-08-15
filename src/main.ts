@@ -15,13 +15,17 @@ const app = new App({
   background: el<HTMLInputElement>("input-background"),
   properties: {
     section: el<HTMLElement>("icon-properties"),
+    name: el<HTMLElement>("selected-icon-name"),
     color: el<HTMLInputElement>("input-color"),
+    colorHex: el<HTMLInputElement>("input-color-hex"),
     rotation: el<HTMLInputElement>("input-rotation"),
     rotationNumber: el<HTMLInputElement>("input-rotation-number"),
     scale: el<HTMLInputElement>("input-scale"),
     scaleNumber: el<HTMLInputElement>("input-scale-number"),
   },
 });
+
+el<HTMLInputElement>("input-default-icon-color").value = app.defaultIconColor;
 
 const status = el<HTMLElement>("status");
 function flashStatus(message: string) {
@@ -82,9 +86,25 @@ el<HTMLInputElement>("input-background").addEventListener("input", (event) => {
   app.setBackground((event.target as HTMLInputElement).value);
 });
 
+el<HTMLInputElement>("input-default-icon-color").addEventListener("input", (event) => {
+  app.defaultIconColor = (event.target as HTMLInputElement).value;
+});
+
 // Properties panel (listeners wired once; app.render() only pushes values into these).
-el<HTMLInputElement>("input-color").addEventListener("input", (event) => {
-  app.updateSelected({ color: (event.target as HTMLInputElement).value });
+// The swatch and the hex text field both edit the same value — keep them in sync
+// with each other as well as pushing to the icon.
+const colorSwatch = el<HTMLInputElement>("input-color");
+const colorHex = el<HTMLInputElement>("input-color-hex");
+const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
+
+colorSwatch.addEventListener("input", () => {
+  colorHex.value = colorSwatch.value;
+  app.updateSelected({ color: colorSwatch.value });
+});
+colorHex.addEventListener("input", () => {
+  if (!HEX_COLOR_RE.test(colorHex.value)) return;
+  colorSwatch.value = colorHex.value;
+  app.updateSelected({ color: colorHex.value });
 });
 
 function wireRotation(input: HTMLInputElement) {

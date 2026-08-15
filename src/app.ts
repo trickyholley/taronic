@@ -11,13 +11,14 @@ export interface AppRefs {
   properties: PropertyRefs;
 }
 
-const DEFAULT_ICON_COLOR = "#f2e9dc";
-
 /** Owns the card document and all mutation entry points; every mutation ends in a
  * full render() (see canvasRender.ts — cheap at this scale, no need to diff). */
 export class App {
   doc: CardDocument = emptyDocument();
   selectedId: string | null = null;
+  /** Color newly dropped icons get. Session-only, set via the toolbar — not part of
+   * the saved document. */
+  defaultIconColor = "#f2e9dc";
 
   constructor(private refs: AppRefs) {
     this.wireCanvasDragToMove();
@@ -52,7 +53,7 @@ export class App {
       y,
       rotation: 0,
       scale: 1,
-      color: DEFAULT_ICON_COLOR,
+      color: this.defaultIconColor,
     };
     this.doc.icons.push(instance);
     this.selectedId = instance.instanceId;

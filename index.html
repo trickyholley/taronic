@@ -19,6 +19,10 @@
           Background
           <input id="input-background" type="color" />
         </label>
+        <label class="bg-picker">
+          New icon color
+          <input id="input-default-icon-color" type="color" />
+        </label>
         <span id="status" class="status"></span>
       </header>
 
@@ -38,7 +42,11 @@
       <aside class="properties" id="properties-panel">
         <section id="icon-properties" class="panel-section" hidden>
           <h2>Selected icon</h2>
-          <label>Color <input id="input-color" type="color" /></label>
+          <p id="selected-icon-name" class="icon-name"></p>
+          <label
+            >Color <input id="input-color" type="color" />
+            <input id="input-color-hex" type="text" maxlength="7" spellcheck="false"
+          /></label>
           <label
             >Rotation <input id="input-rotation" type="range" min="0" max="360" step="1" />
             <input id="input-rotation-number" type="number" min="0" max="360" step="1"

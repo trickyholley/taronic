@@ -2,7 +2,9 @@ import type { CardDocument, PlacedIcon } from "./types";
 
 export interface PropertyRefs {
   section: HTMLElement;
+  name: HTMLElement;
   color: HTMLInputElement;
+  colorHex: HTMLInputElement;
   rotation: HTMLInputElement;
   rotationNumber: HTMLInputElement;
   scale: HTMLInputElement;
@@ -16,7 +18,9 @@ export function syncPropertiesPanel(refs: PropertyRefs, doc: CardDocument, selec
   refs.section.hidden = !icon;
   if (!icon) return;
 
+  refs.name.textContent = icon.name;
   refs.color.value = icon.color;
+  refs.colorHex.value = icon.color;
   refs.rotation.value = String(icon.rotation);
   refs.rotationNumber.value = String(icon.rotation);
   refs.scale.value = String(icon.scale);
