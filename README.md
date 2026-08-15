@@ -1,6 +1,7 @@
-<img src="public/favicon.svg" width="32" height="32" alt="" align="left" />
-
-# Taronic
+<div align="center">
+  <img src="public/favicon.svg" width="96" height="96" alt="" />
+  <h1>Taronic</h1>
+</div>
 
 Minimal SVG card editor for drawing tarot deck art by hand: drop icons on a card-shaped
 canvas, transform them, save your work, export SVG. Not a Pyxie feature — a standalone

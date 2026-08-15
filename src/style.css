@@ -46,10 +46,17 @@ body {
 }
 
 .toolbar h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   font-size: 1rem;
   margin: 0 0.5rem 0 0;
   color: var(--accent);
   letter-spacing: 0.03em;
+}
+
+.toolbar h1 img {
+  border-radius: 5px;
 }
 
 .status {
