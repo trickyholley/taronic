@@ -1,3 +1,4 @@
+import { sanitizeSvgInner } from "./sanitizeSvg";
 import type { IconDef } from "./types";
 
 const SVG_OPEN_TAG_RE = /<svg\b([^>]*)>/i;
@@ -47,6 +48,7 @@ export async function parseImportedSvgFiles(files: FileList | File[]): Promise<I
     const viewBoxMatch = raw.match(VIEWBOX_RE);
     const presentation = extractPresentationAttrs(openTagMatch[1]);
     const innerBody = bodyMatch[1].trim();
+    const svgInner = presentation ? `<g ${presentation}>${innerBody}</g>` : innerBody;
     icons.push({
       id: `custom:${file.name}:${crypto.randomUUID()}`,
       name: titleCase(file.name),
@@ -55,7 +57,9 @@ export async function parseImportedSvgFiles(files: FileList | File[]): Promise<I
       // guessed at.
       author: "",
       viewBox: viewBoxMatch ? viewBoxMatch[1] : "0 0 24 24",
-      svgInner: presentation ? `<g ${presentation}>${innerBody}</g>` : innerBody,
+      // File picked by the user, not something we authored - sanitize before it ever
+      // reaches an innerHTML sink (see sanitizeSvg.ts).
+      svgInner: sanitizeSvgInner(svgInner),
     });
   }
   return icons;

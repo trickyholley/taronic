@@ -1,5 +1,6 @@
 import { LABEL_BOTTOM_MARGIN } from "./canvasRender";
 import { innerTransform, outerTransform } from "./iconTransform";
+import { sanitizeSvgInner } from "./sanitizeSvg";
 import { emptyDocument, type CardCredit, type CardDocument } from "./types";
 
 // TS's bundled DOM lib doesn't ship File System Access API types yet — typed
@@ -88,6 +89,11 @@ export async function loadDocumentFromFile(file: File): Promise<CardDocument> {
   // Cards saved before the label field existed have none - default it in rather than
   // rejecting the file.
   if (!parsed.label) parsed.label = emptyDocument().label;
+  // A card's svgInner is arbitrary markup from whoever last saved the file - sanitize
+  // it here, once, so canvasRender/palette/buildExportSvg never have to trust it.
+  for (const icon of parsed.icons) {
+    if (typeof icon?.svgInner === "string") icon.svgInner = sanitizeSvgInner(icon.svgInner);
+  }
   return parsed as CardDocument;
 }
 

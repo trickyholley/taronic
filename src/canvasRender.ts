@@ -28,6 +28,9 @@ export function renderCanvas(svg: SVGSVGElement, doc: CardDocument, selectedId: 
 
     const inner = document.createElementNS(SVG_NS, "g");
     inner.setAttribute("transform", innerTransform(icon.viewBox));
+    // svgInner is trusted here: build-time-baked icons come from our own build step,
+    // and anything loaded/imported at runtime was already run through
+    // sanitizeSvg.ts's sanitizeSvgInner (persistence.ts, importIcons.ts).
     inner.innerHTML = icon.svgInner;
     group.appendChild(inner);
 

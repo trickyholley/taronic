@@ -26,6 +26,7 @@ export function setupPalette(refs: {
     button.type = "button";
     button.title = icon.name;
     button.draggable = true;
+    // icon.svgInner is trusted here — see the comment in canvasRender.ts.
     button.innerHTML = `<svg viewBox="${icon.viewBox}">${icon.svgInner}</svg>`;
     button.addEventListener("dragstart", (event) => {
       event.dataTransfer?.setData("text/plain", icon.id);
