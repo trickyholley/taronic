@@ -8,7 +8,7 @@ canvas, transform them, save your work, export SVG. Not a Pyxie feature — a st
 tool for making Pyxie deck art offline. No build step ships icons at runtime; no server,
 no accounts, everything lives in the browser tab.
 
-Live at **[trickyholley.github.io/taronic](https://trickyholley.github.io/taronic/)**
+Live at **[taronic.pyxietarot.live](https://taronic.pyxietarot.live/)**
 (deploys automatically on push to `main` — see `.github/workflows/deploy.yml`).
 
 ## Use it
@@ -18,8 +18,7 @@ pnpm install
 pnpm dev
 ```
 
-Opens at `http://localhost:5190/taronic/` (the `/taronic/` prefix matches the deployed
-GitHub Pages path — see `vite.config.ts`'s `base`).
+Opens at `http://localhost:5190/`.
 
 - Drag an icon from the left palette onto the card. Search filters the palette.
 - Click a placed icon to select it; drag it around the canvas directly, or use the right
